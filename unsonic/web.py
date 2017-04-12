@@ -21,7 +21,7 @@ CONFIG = None
 SETTINGS = None
 
 
-def init(global_config, settings):
+def init(global_config, settings, dbinfo=None):
     global CONFIG_FILE, CONFIG, SETTINGS
 
     # Stash the global config bits
@@ -32,7 +32,7 @@ def init(global_config, settings):
     CONFIG.read()
 
     # Setup models
-    models.init(settings, True)
+    models.init(settings, True, db_info=dbinfo)
     models.load()
 
     unsonic.log.resetupLogging(global_config["__file__"], global_config)
@@ -71,6 +71,11 @@ def main(global_config, **settings):
         config.add_route(cmd.name, "/rest/" + cmd.name,
                          factory="unsonic.views.rest.RouteContext")
         config.add_view(cmd, route_name=cmd.name, permission=auth.Roles.REST)
+        # Clementine calls some API's with the wrong caps.. sigh
+        name = cmd.name[0].upper() + cmd.name[1:]
+        config.add_route(name, "/rest/" + name,
+                         factory="unsonic.views.rest.RouteContext")
+        config.add_view(cmd, route_name=name, permission=auth.Roles.REST)
 
     # Log requests
     app = config.make_wsgi_app()

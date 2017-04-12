@@ -1,3 +1,7 @@
+ifeq "$(origin VIRTUAL_ENV)" "undefined"
+	VIRTUAL_ENV=$(dir $(abspath $(lastword $(MAKEFILE_LIST))))/build/venv
+endif
+
 VBIN=$(VIRTUAL_ENV)/bin
 VLIB=$(VIRTUAL_ENV)/lib
 PYTHON=$(VBIN)/python
@@ -28,7 +32,7 @@ external: mishmash
 mishmash: external/mishmash mishmash.egg
 
 mishmash-update:
-	cd external/mishmash; git fetch
+	cd external/mishmash; git pull
 	cd external/mishmash; $(PIP) install -Ue .
 
 external/mishmash:
@@ -106,5 +110,4 @@ docker-clean:
     done
 	-docker rmi -f unsonic
 
-.PHONY: devel db pyramid paste sqlalchemy psycopg2 run tests clean mishmash mishmash.egg
 .PHONY: dist-clean external docker
