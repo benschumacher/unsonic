@@ -20,6 +20,7 @@ import mishmash.orm
 from mishmash.orm import Base, Artist, Album, Meta, Track    # noqa: F401
 from mishmash.orm import Image, Tag, Library, artist_images  # noqa: F401
 from mishmash.orm import album_images, track_tags            # noqa: F401
+from mishmash.orm import VARIOUS_ARTISTS_NAME
 from mishmash.database import init as dbinit
 
 
@@ -344,8 +345,7 @@ def init(settings, webapp=False, db_info=None):
     if not db_info:
         config = Namespace()
         config.db_url = db_url
-        config.various_artists_name = web.CONFIG.get("mishmash",
-                                                     "various_artists_name")
+        config.various_artists_name = VARIOUS_ARTISTS_NAME
         db_info = dbinit(config.db_url)
     db_engine = db_info.engine
     session_maker = db_info.SessionMaker
